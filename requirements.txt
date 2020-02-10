@@ -1,0 +1,7 @@
+matplotlib
+scipy
+numpy
+peakutils
+graphviz
+joblib
+scikit-image
