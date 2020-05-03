@@ -1,6 +1,6 @@
 multiobject tracking algorithm
 
-Works for python3 in Linux or Mac OS, due to dependency on https://github.com/nwojke/mcf/
+Works for python3 in Linux or Mac OS, Windows is not supported due to dependency on https://github.com/nwojke/mcf/
 
 Download https://github.com/nwojke/mcf/, put into "dependencies" folder. Follow instructions provided there.
 
