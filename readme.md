@@ -6,8 +6,7 @@ Download https://github.com/nwojke/mcf/, put into "dependencies" folder. Follow 
 
 Applicable data can be found at:
 
-url: https://stanford.box.com/s/mmzzprbv4au3fzrk2hkxnh8wxv32d635
-password: 48KrinH7soipcy8ALSRG
+https://stanford.box.com/v/sparse-social-touch
 folder:pressure_data
 
 This data includes a description of the data.
