@@ -1,4 +1,4 @@
-multiobject tracking algorithm
+Social touch data mapping algorithm code
 
 Works for python3 in Linux or Mac OS, Windows is not supported due to dependency on https://github.com/nwojke/mcf/
 
