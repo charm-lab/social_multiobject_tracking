@@ -138,9 +138,9 @@ def setTactorLocations(trajectory_set, clear_locs = False):
             for time in range(len(frames)):
                 if trajectoryInPoly(trajectory, tactor, time, cur_virtual_radius):
                     index = trajectory['times'].index(time)
-                    point = Point(trajectory['x_mm'][index], trajectory['y_mm'][index])
-                    relative_x = point.x - tactor.point.x
-                    relative_y = point.y - tactor.point.y
+                    point = np.array([trajectory['x_mm'][index], trajectory['y_mm'][index]])
+                    relative_x = point[0] - tactor.array_point[0]
+                    relative_y = point[1] - tactor.array_point[1]
                     tactor.addTrajLoc(time, relative_x, relative_y, trajectory['pressures'][index])
     for tactor in tactors:
         tactor.getAllActuations(frames)
@@ -149,7 +149,10 @@ def setTactorLocations(trajectory_set, clear_locs = False):
 
 def pruneBaseTrajectories(base_trajectories, num_time_indices, tactors, transform = None):
     trajectory_set_cost = 0
-    cur_trajectories = copy.deepcopy(base_trajectories)
+    cur_trajectories = base_trajectories
+    for cur_trajectory in cur_trajectories:
+        for weight_index in range(len(cur_trajectory['in_poly_weight'])):
+            cur_trajectory['in_poly_weight'][weight_index] = 0
     if transform is not None:
         x_trans, y_trans, scale, rotation, vert_trans = transform
         tactors = applyTransformations(tactors, transform)
@@ -171,7 +174,10 @@ def pruneBaseTrajectoriesCosts(base_trajectories, num_time_indices, tactors, tra
     trajectory_set_costs = []
     for transform in transform_set:
         trajectory_set_cost = 0
-        cur_trajectories = copy.deepcopy(base_trajectories)
+        cur_trajectories = base_trajectories
+        for cur_trajectory in cur_trajectories:
+            for weight_index in range(len(cur_trajectory['in_poly_weight'])):
+                cur_trajectory['in_poly_weight'][weight_index] = 0
         if transform is not None:
             x_trans, y_trans, scale, rotation, vert_trans = transform
             temp_tactors = applyTransformations(tactors, transform)
@@ -319,6 +325,7 @@ def bipartiteCover(bounding_box_sets):
 def findTrajectoryBounders(trajectories, tactors, num_indices, virtual_radius):
     if len(trajectories) == 0:
         return trajectories
+    radius_square = virtual_radius**2
     time_vertex_boxes = []
     for time in range(num_indices):
         time_vertex_boxes.append([])
@@ -329,11 +336,10 @@ def findTrajectoryBounders(trajectories, tactors, num_indices, virtual_radius):
                 tactor = tactors[tactor_index]
                 if trajectoryInPoly(trajectory, tactor, time, virtual_radius):
                     index = trajectory['times'].index(time)
-                    point = Point(trajectory['x_mm'][index], trajectory['y_mm'][index])
-                    relative_x = point.x - tactor.point.x
-                    relative_y = point.y - tactor.point.y
+                    relative_x = trajectory['x_mm'][index] - tactor.array_point[0]
+                    relative_y = trajectory['y_mm'][index] - tactor.array_point[1]
                     dist_squared = relative_x**2 + relative_y**2
-                    trajectory['in_poly_weight'][index] = tactor.weight*(1.04 - .04*dist_squared/(virtual_radius**2))
+                    trajectory['in_poly_weight'][index] = tactor.weight*(1.04 - .04*dist_squared/(radius_square))
                     time_vertex_boxes[time][trajectory_index].add(tactor_index)
                     trajectory['tactors'][time].append(tactor_index)
     return time_vertex_boxes
@@ -351,9 +357,12 @@ def trajectoryInPoly(trajectory, tactor, time, virtual_radius):
     #tactor dims are in mm.
     if time in trajectory['times']:
         index = trajectory['times'].index(time)
-        point = Point(trajectory['x_mm'][index], trajectory['y_mm'][index])
-        relative_x = point.x - tactor.point.x
-        relative_y = point.y - tactor.point.y
+        relative_x = trajectory['x_mm'][index] - tactor.array_point[0]
+        if relative_x > virtual_radius:
+            return False
+        relative_y = trajectory['y_mm'][index] - tactor.array_point[1]
+        if relative_y > virtual_radius:
+            return False
         dist_squared = relative_x**2 + relative_y**2
         if dist_squared <= virtual_radius**2:
             return True

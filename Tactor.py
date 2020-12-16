@@ -34,8 +34,9 @@ class Tactor:
 
     def applyTransformation(self, transform_set):
         x_trans, y_trans, scale, rotation, vert_trans = transform_set
-        self.point = shapely.affinity.rotate(self.point, rotation, origin=(0,0), use_radians=True)
-        self.point = shapely.affinity.scale(self.point, xfact = scale, yfact = scale, origin=(0,0))
+        if rotation is not 0 or scale is not 1:
+            self.point = shapely.affinity.rotate(self.point, rotation, origin=(0,0), use_radians=True)
+            self.point = shapely.affinity.scale(self.point, xfact = scale, yfact = scale, origin=(0,0))
         self.point = shapely.affinity.translate(self.point, xoff=x_trans, yoff=y_trans + vert_trans*self.row)
         self.array_point = np.array([self.point.x, self.point.y])
         self.scale = scale
@@ -57,8 +58,8 @@ class Tactor:
         neighbor_time = None
         for time in range(len(frames)):
             if time in self.traj_locs:
-                x = self.point.x+self.traj_locs[time][0]
-                y = self.point.y+self.traj_locs[time][1]
+                x = self.array_point[0]+self.traj_locs[time][0]
+                y = self.array_point[1]+self.traj_locs[time][1]
                 z = self.traj_locs[time][2]
                 self.actuator_locs[time] = [x,y,z]
                 self.main_path_locs[time] = [x,y,z]
@@ -88,8 +89,8 @@ class Tactor:
         for time in self.actuator_locs.keys():
             cur_loc = [0,0,0]
             #print(time, self.actuator_locs[time][1], self.actuator_locs[time][0])
-            cur_loc[0] = self.actuator_locs[time][0] - self.point.x
-            cur_loc[1] = self.actuator_locs[time][1] - self.point.y
+            cur_loc[0] = self.actuator_locs[time][0] - self.array_point[0]
+            cur_loc[1] = self.actuator_locs[time][1] - self.array_point[1]
             cur_loc[2] = self.actuator_locs[time][2]- self.touch_mean
             out_locs[time] = cur_loc
         self.actuator_relative_mm = out_locs
@@ -116,8 +117,8 @@ class Tactor:
     def coordsInTactor(self, x, y):
         x = x*(1.0/frame_scaling_factor)*25.4
         y = y*(1.0/frame_scaling_factor)*25.4
-        relative_x = x - self.point.x
-        relative_y = y - self.point.y
+        relative_x = x - self.array_point[0]
+        relative_y = y - self.array_point[1]
         dist_squared = relative_x**2 + relative_y**2
         if dist_squared <= self.radius**2:
             return True

@@ -22,27 +22,7 @@ def generateAlignedCircles():
             weight = 1
             if w == 1:
                 weight = 1.02
-            tactors.append(Tactor(Point(center_dist_width*w, center_dist_height*h), weight, h, w))
-    return tactors
-
-def generateOffsetCircles1():
-    tactors = []
-    for h in range(2):
-        for w in range(4):
-            weight = 1
-            if w == 1:
-                weight = 1.02
-            tactors.append(Tactor(Point(center_dist_width*(w+h/2.0), center_dist_height*h), weight, h, w))
-    return tactors
-
-def generateOffsetCircles2():
-    tactors = []
-    for h in range(2):
-        for w in range(4):
-            weight = 1
-            if w == 1:
-                weight = 1.02
-            tactors.append(Tactor(Point(center_dist_width*(w+(1-h)/2.0), center_dist_height*h), weight, h, w))
+            tactors.append(Tactor(Point(center_dist_width*w, center_dist_height*h), weight, h, w, np.array([center_dist_width*w, center_dist_height*h])))
     return tactors
 
 def generateNeighborSet(tactors):
