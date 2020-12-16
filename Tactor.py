@@ -13,7 +13,7 @@ def indexTomm(val):
     return (1.0/frame_scaling_factor)*val*25.4
 
 class Tactor:
-    def __init__(self, point, weight, row, col):
+    def __init__(self, point, weight, row, col, array_point):
         self.point = point #mm
         self.weight = weight
         self.row = row
@@ -27,6 +27,7 @@ class Tactor:
         self.neighbors = set([])
         self.scale = 1
         self.velocity_scaled_locs = []
+        self.array_point = array_point
 
     def setRadius(self, radius):
         self.radius = radius
@@ -36,10 +37,11 @@ class Tactor:
         self.point = shapely.affinity.rotate(self.point, rotation, origin=(0,0), use_radians=True)
         self.point = shapely.affinity.scale(self.point, xfact = scale, yfact = scale, origin=(0,0))
         self.point = shapely.affinity.translate(self.point, xoff=x_trans, yoff=y_trans + vert_trans*self.row)
+        self.array_point = np.array([self.point.x, self.point.y])
         self.scale = scale
 
     def getCopy(self):
-        return Tactor(Point(self.point), self.weight, self.row, self.col)
+        return Tactor(Point(self.point), self.weight, self.row, self.col, self.array_point)
 
     def addTrajLoc(self, time, x, y, pressure):
         self.traj_locs[time] = [x, y, pressure]

@@ -1,5 +1,6 @@
 import csv
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import numpy as np
@@ -9,7 +10,6 @@ import scipy.signal
 import sys
 import getopt
 import pickle
-import peakutils
 from constants import *
 import imageio
 
@@ -33,12 +33,12 @@ def plotGif(frames, out_folder, out_name, title = None, highlights = None, polyg
         plot_range = len(frames)
     out_drawing = np.copy(frames)
     max_val = np.amax(frames[:,:,:])
-    out_drawing[np.where(frames == -10000)] = 0;
+    out_drawing[np.where(frames == -10000)] = 0
     max_val = np.nanmax(frames)
     images = []
     filenames = []
     for i in range(0,plot_range,frequency):
-        fig, ax = plt.subplots();
+        fig, ax = plt.subplots()
         plt.axis('off')
         im = ax.imshow(out_drawing[i], vmax=max_val, vmin = 0)
         if highlights is not None: 

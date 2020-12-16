@@ -367,7 +367,7 @@ def findOptimalTrajectories(trajectories, invalid_sets):
         return []
     v = cvx.Variable(len(trajectories), boolean=True)
     weights = [-trajectory['total_cost'] for trajectory in trajectories]
-    objective = cvx.Maximize(v*weights)
+    objective = cvx.Maximize(v@weights)
     constraints = []
     trajes = []
     for traj_indices in invalid_sets:
