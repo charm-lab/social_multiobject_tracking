@@ -53,7 +53,7 @@ def runTracking(data_instance, save_dir, title_name, cache_data = False):
 
 
 def main(argv):
-    data_file = "data/subject_data_0.p"
+    data_file = "pressure_data/subject_data_0.p"
     dataset = loadData(data_file)
 
     save_dir = "tracking_results/"
