@@ -1,9 +1,6 @@
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
-center_dist_width = 23.5
-center_dist_height = 23.5
-
 center_dist_width = 37
 center_dist_height = 50
 
