@@ -37,10 +37,9 @@ def runTracking(data_instance, save_dir, title_name, cache_data = False):
 
 
     if os.path.isfile(pickle_name) and cache_data:
-        print('loading')
+        print('Loading cached trajectories')
         cur_touch_trajectory_set = pickle.load(open(pickle_name, "rb"))
     else:
-        print('not loading')
         print("Starting multi tracking")
         cur_touch_trajectory_set = cur_touch_trajectory_set = generateOptimalTrajectories(tared_frames)
         pickle.dump(cur_touch_trajectory_set, open(pickle_name, "wb"))
